@@ -1,4 +1,4 @@
-import Link from "next/dist/client/link";
+import Link from 'next/dist/client/link';
 
 export default function Home() {
   return (

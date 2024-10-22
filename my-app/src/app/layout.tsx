@@ -1,11 +1,11 @@
 /* アプリのページ全体に共通するレイアウトや設定をここに */
 
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "test",
-  description: "this is my Next.js app",
+  title: 'test',
+  description: 'this is my Next.js app',
 };
 
 export default function RootLayout({
