@@ -1,9 +1,11 @@
+/* アプリのページ全体に共通するレイアウトや設定をここに */
+
 import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "test",
-  description: "test",
+  description: "this is my Next.js app",
 };
 
 export default function RootLayout({
@@ -12,12 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="ja">
+      <body className={`antialiased`}>{children}</body>
     </html>
   );
 }
