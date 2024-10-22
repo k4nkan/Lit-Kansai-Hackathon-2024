@@ -72,38 +72,22 @@ npm run dev
 - 指示に従って進んでいき、いい感じにmergeとbranchの消去を行います。
 
 ## Git,GitHub/命名規則
-#### issue
+### issue
 
-- 【HTML】 `What`を`How`<br>
+- 【HTML】 `What`を`How`  
+  （例）  【HTML】 sectionタグにトップ画像を追加  
+- 【CSS】 `What`を`How`  
+  （例）  【CSS】 h2.classの色を赤色に変更  
 
-  （例）  【HTML】 sectionタグにトップ画像を追加
+### branch
 
-- 【CSS】 `What`を`How`<br>
-
-  （例）  【CSS】 h2.classの色を赤色に変更
-
-<br />
-
-#### branch
-
-- issues/`イシュー番号`<br>
-
+- issues/`イシュー番号`  
   （例）  issues/3
 
-<br />
-
-#### commit massage
-
-- #`イシュー番号` `What`を`How`<br>
-
+### commit massage
+- #`イシュー番号` `What`を`How`  
   （例）  #3 sectionタグにトップ画像を追加
 
-<br />
-
-#### pull request
-
-- [`ブランチ名`] `What`を`How`<br>
-
+### pull request
+- [`ブランチ名`] `What`を`How`  
   （例）  [issues/3] sectionタグにトップ画像を追加
-
-<br />
