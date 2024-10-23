@@ -71,6 +71,17 @@ npm run dev
 - push後、GitHubを開くと`compare & pull request`を表示されるのでクリックします。
 - 指示に従って進んでいき、いい感じにmergeとbranchの消去を行います。
 
+### 7. issueを立てて次の作業へ
+`in GitHub`
+- 1に戻る 
+
+`in VSCode`
+- もしmain branchでアプリを実行したい場合、以下をターミナルで実行します。
+```bash
+git checkout main
+git pull
+```
+
 ## Git,GitHub/命名規則
 ### issue
 
