@@ -1,3 +1,4 @@
+import SimpleText from '@/componets/hedder';
 import Link from 'next/dist/client/link';
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
         <li>
           <Link href="/connect">Connect</Link>
         </li>
+        <SimpleText text="こんにちは、世界！" />
       </ul>
     </div>
   );
