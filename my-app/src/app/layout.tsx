@@ -1,7 +1,8 @@
-/* アプリのページ全体に共通するレイアウトや設定をここに */
+// app/layout.tsx
 
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthProvider } from '../../context/auth';
 
 export const metadata: Metadata = {
   title: 'test',
@@ -15,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={`antialiased`}>{children}</body>
+      <body className="antialiased">
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }
