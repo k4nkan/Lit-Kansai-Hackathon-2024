@@ -6,7 +6,7 @@ export default function Home() {
       <div>this is connect page</div>
       <ul>
         <li>
-          <Link href="/">Home</Link>
+          <Link href="/top">Top Page</Link>
         </li>
       </ul>
     </div>
