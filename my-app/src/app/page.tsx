@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/dist/client/link';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/auth';
 import { login } from '../lib/auth';
@@ -11,12 +10,14 @@ export default function Home() {
   const user = useAuth();
   const router = useRouter();
 
+  // サインインしていればトップページに
   useEffect(() => {
     if (user) {
       router.push('/top');
     }
   }, [user, router]);
 
+  // サインイン
   const signIn = () => {
     setWaiting(true);
 
