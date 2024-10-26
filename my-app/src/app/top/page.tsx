@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { logout } from '../../lib/auth';
+import { logout } from '@/lib/auth';
 
 export default function Home() {
   const [waiting, setWaiting] = useState<boolean>(false);
