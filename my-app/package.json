@@ -9,9 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@codemirror/basic-setup": "^0.20.0",
+    "@codemirror/lang-javascript": "^0.20.0",
+    "@codemirror/state": "^0.20.0",
+    "@codemirror/view": "^0.20.0",
     "firebase": "^11.0.1",
     "firebase-admin": "^12.6.0",
     "next": "14.2.15",
+    "p5": "^1.11.0",
     "react": "^18",
     "react-dom": "^18"
   },
