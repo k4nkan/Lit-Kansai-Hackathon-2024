@@ -52,6 +52,9 @@ export default function Home() {
         <li>
           <Link href="/connect">Connect</Link>
         </li>
+        <li>
+          <Link href="/coding">Coding</Link>
+        </li>
       </ul>
       <a href="/top" onClick={signOut}>
         {waiting ? 'ログアウト中...' : 'ログアウト'}

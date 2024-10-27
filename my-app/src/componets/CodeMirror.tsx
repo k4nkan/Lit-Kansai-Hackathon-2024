@@ -20,11 +20,16 @@ const CodeMirrorEditor: React.FC = () => {
         parent: editorRef.current,
       });
 
-      return () => view.destroy(); // クリーンアップ
+      return () => view.destroy(); // Cleanup
     }
   }, []);
 
-  return <div ref={editorRef} />;
+  return (
+    <div>
+      <div ref={editorRef} />
+      <button>実行</button>
+    </div>
+  );
 };
 
 export default CodeMirrorEditor;
