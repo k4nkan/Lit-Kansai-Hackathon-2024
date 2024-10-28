@@ -5,8 +5,13 @@ import { EditorView, basicSetup } from '@codemirror/basic-setup';
 import { EditorState } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
 
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../../firebase/client';
+import useAuth from '../../firebase/useAuth';
+
 const CodeMirrorEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (editorRef.current) {
@@ -24,10 +29,23 @@ const CodeMirrorEditor: React.FC = () => {
     }
   }, []);
 
+  const saveCode = async (code: string) => {
+    if (user && user.uid) {
+      try {
+        const userDocRef = doc(db, 'users', user.uid);
+        await setDoc(userDocRef, { code }, { merge: true });
+      } catch (error) {
+        console.error('保存できませんでした：', error);
+      }
+    } else {
+      console.log('ログインしていません');
+    }
+  };
+
   return (
     <div>
       <div ref={editorRef} />
-      <button>実行</button>
+      <button onClick={() => saveCode('code')}>実行</button>
     </div>
   );
 };
