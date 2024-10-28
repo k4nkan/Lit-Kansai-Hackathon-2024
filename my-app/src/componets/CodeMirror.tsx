@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { EditorView, basicSetup } from '@codemirror/basic-setup';
 import { EditorState } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
-
 import useAuth from '../../firebase/useAuth';
 import { useRouter } from 'next/navigation';
 import { saveCode } from '../../firebase/saveCode';
@@ -19,7 +18,7 @@ const CodeMirrorEditor: React.FC = () => {
   useEffect(() => {
     const loadCode = async () => {
       if (user) {
-        const code = await getCode(user.id); // ユーザーIDでコードを取得
+        const code = await getCode(user.id);
         const initialDoc =
           code ||
           '// p5.js code goes here...\n\nfunction setup() {\n  createCanvas(400, 400);\n}\n\nfunction draw() {\n  background(220);\n}';

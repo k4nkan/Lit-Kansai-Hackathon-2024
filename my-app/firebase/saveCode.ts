@@ -8,7 +8,6 @@ export const saveCode = async (code: string, uid: string) => {
       code,
       uid,
     });
-    console.log('Document written with ID: ', uid);
   } catch (e) {
     console.error('Error adding document: ', e);
   }
