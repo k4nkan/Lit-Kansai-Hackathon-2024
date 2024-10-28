@@ -8,6 +8,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import useAuth from '../../firebase/useAuth';
 import { useRouter } from 'next/navigation';
 import { saveCode } from '../../firebase/saveCode';
+import { getCode } from '../../firebase/getCode';
 
 const CodeMirrorEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -16,21 +17,32 @@ const CodeMirrorEditor: React.FC = () => {
   const [editorView, setEditorView] = useState<EditorView | null>(null);
 
   useEffect(() => {
-    if (editorRef.current) {
-      const state = EditorState.create({
-        doc: '// p5.js code goes here...\n\nfunction setup() {\n  createCanvas(400, 400);\n}\n\nfunction draw() {\n  background(220);\n}',
-        extensions: [basicSetup, javascript()],
-      });
+    const loadCode = async () => {
+      if (user) {
+        const code = await getCode(user.id); // ユーザーIDでコードを取得
+        const initialDoc =
+          code ||
+          '// p5.js code goes here...\n\nfunction setup() {\n  createCanvas(400, 400);\n}\n\nfunction draw() {\n  background(220);\n}';
 
-      const view = new EditorView({
-        state,
-        parent: editorRef.current,
-      });
+        const state = EditorState.create({
+          doc: initialDoc,
+          extensions: [basicSetup, javascript()],
+        });
 
-      setEditorView(view);
-      return () => view.destroy();
-    }
-  }, []);
+        if (editorRef.current) {
+          const view = new EditorView({
+            state,
+            parent: editorRef.current,
+          });
+
+          setEditorView(view);
+          return () => view.destroy();
+        }
+      }
+    };
+
+    loadCode();
+  }, [user]);
 
   const handleSaveCode = async () => {
     if (user && editorView) {
