@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { EditorView, basicSetup } from '@codemirror/basic-setup';
 import { EditorState } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
 
-import { doc, setDoc } from 'firebase/firestore';
-import { db } from '../../firebase/client';
 import useAuth from '../../firebase/useAuth';
 import { useRouter } from 'next/navigation';
+import { saveCode } from '../../firebase/saveCode';
 
 const CodeMirrorEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { user } = useAuth(router);
+  const [editorView, setEditorView] = useState<EditorView | null>(null);
 
   useEffect(() => {
     if (editorRef.current) {
@@ -27,18 +27,15 @@ const CodeMirrorEditor: React.FC = () => {
         parent: editorRef.current,
       });
 
+      setEditorView(view);
       return () => view.destroy();
     }
   }, []);
 
-  const saveCode = async (code: string) => {
-    if (user && user.uid) {
-      try {
-        const userDocRef = doc(db, 'users', user.uid);
-        await setDoc(userDocRef, { code }, { merge: true });
-      } catch (error) {
-        console.error('保存できませんでした：', error);
-      }
+  const handleSaveCode = async () => {
+    if (user && editorView) {
+      const code = editorView.state.doc.toString();
+      await saveCode(code, user.id);
     } else {
       console.log('ログインしていません');
     }
@@ -47,7 +44,7 @@ const CodeMirrorEditor: React.FC = () => {
   return (
     <div>
       <div ref={editorRef} />
-      <button onClick={() => saveCode('code')}>実行</button>
+      <button onClick={handleSaveCode}>実行</button>
     </div>
   );
 };
