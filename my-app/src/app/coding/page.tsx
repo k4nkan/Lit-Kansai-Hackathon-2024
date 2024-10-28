@@ -1,6 +1,6 @@
 'use client';
 
-import { CodeMirrorEditor } from '@/componets/CodeMirror';
+import CodeMirrorEditor from "@/componets/CodeMirror";
 
 const Home: React.FC = () => {
   return (

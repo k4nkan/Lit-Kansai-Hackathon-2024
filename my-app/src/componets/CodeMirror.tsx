@@ -1,28 +1,63 @@
-// components/CodeMirrorEditor.tsx
-import { memo, useEffect, useRef } from "react";
-import { EditorState } from "@codemirror/state";
-import { EditorView, basicSetup } from "@codemirror/basic-setup";
+'use client';
 
-export const CodeMirrorEditor = memo(() => {
+import React, { useEffect, useRef, useState } from 'react';
+import { EditorView, basicSetup } from '@codemirror/basic-setup';
+import { EditorState } from '@codemirror/state';
+import { javascript } from '@codemirror/lang-javascript';
+import useAuth from '../../firebase/useAuth';
+import { useRouter } from 'next/navigation';
+import { saveCode } from '../../firebase/saveCode';
+import { getCode } from '../../firebase/getCode';
+
+const CodeMirrorEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const { user } = useAuth(router);
+  const [editorView, setEditorView] = useState<EditorView | null>(null);
 
   useEffect(() => {
-    if (!editorRef.current) return;
+    const loadCode = async () => {
+      if (user) {
+        const code = await getCode(user.id);
+        const initialDoc =
+          code ||
+          '// p5.js code goes here...\n\nfunction setup() {\n  createCanvas(400, 400);\n}\n\nfunction draw() {\n  background(220);\n}';
 
-    const state = EditorState.create({
-      doc: '// ここにコードを入力', // 初期コードを設定
-      extensions: [basicSetup],
-    });
+        const state = EditorState.create({
+          doc: initialDoc,
+          extensions: [basicSetup, javascript()],
+        });
 
-    const view = new EditorView({
-      state,
-      parent: editorRef.current,
-    });
+        if (editorRef.current) {
+          const view = new EditorView({
+            state,
+            parent: editorRef.current,
+          });
 
-    return () => {
-      view.destroy();
+          setEditorView(view);
+          return () => view.destroy();
+        }
+      }
     };
-  }, []);
 
-  return <div ref={editorRef} />;
-});
+    loadCode();
+  }, [user]);
+
+  const handleSaveCode = async () => {
+    if (user && editorView) {
+      const code = editorView.state.doc.toString();
+      await saveCode(code, user.id);
+    } else {
+      console.log('ログインしていません');
+    }
+  };
+
+  return (
+    <div>
+      <div ref={editorRef} />
+      <button onClick={handleSaveCode}>実行</button>
+    </div>
+  );
+};
+
+export default CodeMirrorEditor;
