@@ -8,10 +8,12 @@ import { javascript } from '@codemirror/lang-javascript';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/client';
 import useAuth from '../../firebase/useAuth';
+import { useRouter } from 'next/navigation';
 
 const CodeMirrorEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user } = useAuth(router);
 
   useEffect(() => {
     if (editorRef.current) {
@@ -25,7 +27,7 @@ const CodeMirrorEditor: React.FC = () => {
         parent: editorRef.current,
       });
 
-      return () => view.destroy(); // Cleanup
+      return () => view.destroy();
     }
   }, []);
 
