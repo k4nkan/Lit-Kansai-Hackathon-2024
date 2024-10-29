@@ -2,10 +2,9 @@
 
 import React, { useState } from 'react';
 
-type Card = {
-  title: string;
-  coins: number;
-};
+// ボタン画像をインポート
+import LeftButton from '../assets/images/leftbutton.svg';
+import RightButton from '../assets/images/rightbutton.svg';
 
 const themes = [
   'Title1',
@@ -22,14 +21,21 @@ const CardList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const cardsPerPage = 4;
 
-  const paginatedCards = themes.slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage);
+  const paginatedCards = themes.slice(
+    currentPage * cardsPerPage,
+    (currentPage + 1) * cardsPerPage
+  );
 
   const nextPage = () => {
-    if ((currentPage + 1) * cardsPerPage < themes.length) setCurrentPage(currentPage + 1);
+    if ((currentPage + 1) * cardsPerPage < themes.length) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   const prevPage = () => {
-    if (currentPage > 0) setCurrentPage(currentPage - 1);
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   return (
@@ -38,35 +44,55 @@ const CardList: React.FC = () => {
       style={{ width: '90%', maxWidth: '1489px', backgroundColor: '#151454' }}
     >
       {/* ヘッダー */}
-      <h2 className="text-2xl flex items-center gap-2 mb-8">
-        <span style={{ color: '#A7F002' }}>▶</span>
-        <span style={{ color: '#F765A0' }}>IN PROGRESS...</span>
+      <h2 className="flex items-center gap-4 mb-8">
+        <span
+          style={{
+            fontSize: '50px', // アイコンの大きさを調整
+            color: '#A7F002',
+            lineHeight: '1', // 高さの調整
+          }}
+        >
+          ▶︎
+        </span>
+        <span style={{ fontSize: '36px', color: '#F765A0', lineHeight: '1' }}>
+          IN PROGRESS...
+        </span>
       </h2>
 
-      {/* ナビゲーションボタンを少し左に移動 */}
-      <div className="absolute top-8" style={{ right: '40px', gap: '30px', display: 'flex' }}>
+      {/* ナビゲーションボタン */}
+      <div
+        className="absolute"
+        style={{
+          top: '20px',
+          right: '40px',
+          display: 'flex',
+          gap: '40px',
+        }}
+      >
         <button
           onClick={prevPage}
+          className="w-12 h-12"
           disabled={currentPage === 0}
-          className="w-12 h-12 bg-indigo-800 text-white rounded-full flex items-center justify-center border border-white shadow-lg hover:scale-110 hover:shadow-xl transition-all disabled:opacity-50"
+          style={{ cursor: currentPage === 0 ? 'not-allowed' : 'pointer' }}
         >
-          <span className="text-2xl rotate-180">➤</span>
+          <img src={LeftButton.src} alt="Left Button" className="w-full h-full" />
         </button>
         <button
           onClick={nextPage}
+          className="w-12 h-12"
           disabled={(currentPage + 1) * cardsPerPage >= themes.length}
-          className="w-12 h-12 bg-indigo-800 text-white rounded-full flex items-center justify-center border border-white shadow-lg hover:scale-110 hover:shadow-xl transition-all disabled:opacity-50"
+          style={{ cursor: (currentPage + 1) * cardsPerPage >= themes.length ? 'not-allowed' : 'pointer' }}
         >
-          <span className="text-2xl">➤</span>
+          <img src={RightButton.src} alt="Right Button" className="w-full h-full" />
         </button>
       </div>
 
       {/* カードリスト */}
-      <div className="grid grid-cols-4 gap-8 mt-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mt-8">
         {paginatedCards.map((title, index) => (
           <div
             key={index}
-            className="w-64 h-96 bg-[#1E1438] rounded-lg flex flex-col justify-between p-4 shadow-lg"
+            className="w-full md:w-64 h-96 bg-[#1E1438] rounded-lg flex flex-col justify-between p-4 shadow-lg"
           >
             {/* アイコン枠 */}
             <div
@@ -78,9 +104,12 @@ const CardList: React.FC = () => {
                 border: '2px solid #F765A0',
                 borderRadius: '9999px',
                 padding: '8px 12px',
+                fontFamily: 'Young Serif, serif',
+                color: '#FFFFFF', // 数字の色を白に変更
+                fontSize: '14px', // 数字のフォントサイズを小さく
               }}
             >
-              <img src="/eye-icon.png" alt="icon" className="w-5 h-5 mr-2" />
+              <span className="mr-2 text-xl">👁️</span>
               {130}
             </div>
 
@@ -89,13 +118,16 @@ const CardList: React.FC = () => {
 
             {/* タイトル */}
             <div
-              className="flex items-center justify-center font-bold text-lg"
+              className="flex items-center justify-start font-bold text-lg"
               style={{
                 height: '70px',
                 backgroundColor: '#1E1438',
                 border: '2px solid #F765A0',
                 borderRadius: '8px',
                 color: '#A7F002',
+                fontFamily: 'Suez One, serif',
+                paddingLeft: '10px', // 左寄せ
+                fontSize: '24px', // タイトルのフォントサイズを大きく
               }}
             >
               {title}
