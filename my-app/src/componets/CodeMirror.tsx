@@ -1,37 +1,64 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { EditorView } from '@codemirror/view';
+import { EditorView, lineNumbers, highlightActiveLine } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
 import { keymap } from '@codemirror/view';
 import { defaultKeymap } from '@codemirror/commands';
+import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import useAuth from '../../firebase/useAuth';
 import { useRouter } from 'next/navigation';
 import { saveCode } from '../../firebase/saveCode';
 import { getCode } from '../../firebase/getCode';
 
+const customLineNumberTheme = EditorView.theme({
+  ".cm-lineNumbers": {
+    backgroundColor: "#271D42",
+    fontFamily: '"Silkscreen", monospace',
+    color: "white",
+    fontSize: "16px",
+    paddingRight: "5px",
+    width: "35px",
+  },
+  ".cm-gutters": {
+    width: "35px",
+  },
+});
+
+const customEditorTheme = EditorView.theme({
+  ".cm-content": {
+    backgroundColor: "#271D42",
+    color: "white",
+    fontFamily: "monospace",
+  },
+});
+
 const CodeMirrorEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null); 
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const router = useRouter();
   const { user } = useAuth(router);
   const [editorView, setEditorView] = useState<EditorView | null>(null);
-  const [code, setCode] = useState<string>(''); 
+  const [code, setCode] = useState<string>('');
   const [consoleOutput, setConsoleOutput] = useState<string>('');
 
-  // エディタの初期化
   useEffect(() => {
     const loadCode = async () => {
       if (!user) return;
       const savedCode = await getCode(user.id);
-      const initialDoc = savedCode || ''; 
+      const initialDoc = savedCode || '';
 
       if (editorRef.current) {
         const state = EditorState.create({
           doc: initialDoc,
           extensions: [
             javascript(),
+            lineNumbers(),
+            highlightActiveLine(),
+            syntaxHighlighting(defaultHighlightStyle),
+            customLineNumberTheme,
+            customEditorTheme,
             EditorView.lineWrapping,
             keymap.of(defaultKeymap),
             EditorView.editable.of(true),
@@ -53,7 +80,6 @@ const CodeMirrorEditor: React.FC = () => {
     loadCode();
   }, [user]);
 
-  // コードの保存
   const handleSaveCode = async () => {
     if (user && editorView) {
       const newCode = editorView.state.doc.toString();
@@ -64,10 +90,8 @@ const CodeMirrorEditor: React.FC = () => {
     }
   };
 
-  // コードの実行
   const handleExecuteCode = () => {
     if (iframeRef.current) {
-      // iframeをリセット
       iframeRef.current.src = 'about:blank';
       setTimeout(() => {
         loadSketchIntoIframe();
@@ -75,9 +99,8 @@ const CodeMirrorEditor: React.FC = () => {
     }
   };
 
-  // iframeにスケッチをロード
   const loadSketchIntoIframe = () => {
-    const userCode = editorView?.state.doc.toString() || ''; // ユーザーが入力したコードを取得
+    const userCode = editorView?.state.doc.toString() || '';
 
     const sketch = `
       <html>
@@ -88,7 +111,7 @@ const CodeMirrorEditor: React.FC = () => {
           <script>
             try {
               console.log('p5.jsのコードが実行されました');
-              eval(\`${userCode}\`); // ユーザーコードをevalで実行
+              eval(\`${userCode}\`);
             } catch (error) {
               console.error('実行時エラー:', error);
               parent.postMessage({ type: 'error', message: error.message }, '*');
@@ -100,18 +123,14 @@ const CodeMirrorEditor: React.FC = () => {
 
     const iframe = iframeRef.current;
     if (iframe) {
-      console.log('iframeにHTMLを書き込みます');
       iframe.contentWindow?.document.open();
       iframe.contentWindow?.document.write(sketch);
       iframe.contentWindow?.document.close();
-      console.log('iframeへの書き込みが完了しました');
     }
   };
 
-  // メッセージの受信
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      console.log('メッセージを受信:', event.data);
       if (event.data.type === 'log' || event.data.type === 'error') {
         setConsoleOutput((prev) => `${prev}\n${event.data.message}`);
       }
@@ -121,56 +140,47 @@ const CodeMirrorEditor: React.FC = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  // コンソールのクリア
   const handleClearConsole = () => setConsoleOutput('');
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      <div
-        style={{
-          width: '50%',
-          backgroundColor: '#1e1e1e',
-          color: '#fff',
-          padding: '10px',
-        }}
-      >
-        <div ref={editorRef} style={{ height: '70%', overflow: 'auto' }} />
-        <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-          <button onClick={handleSaveCode}>SAVE</button>
-          <button onClick={handleExecuteCode}> PLAY </button>
+    <div style={{ display: 'flex', height: '100vh', padding: '20px', gap: '20px', backgroundColor: '#060038' }}>
+      {/* 左側の情報セクション */}
+      <div style={{ width: '20%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ backgroundColor: '#1E1438', padding: '20px', borderRadius: '8px', border: '2px solid #F765A0' }}>
+          <h1 style={{ fontFamily: 'Suez One', fontSize: '40px', color: '#A7F002' }}>MONSTOR</h1>
+          <p style={{ color: '#fff' }}>FROM: 10/28</p>
+          <p style={{ color: '#fff' }}>TO: 10/31</p>
         </div>
 
-        <div
-          style={{
-            marginTop: '20px',
-            backgroundColor: '#333',
-            color: '#fff',
-            padding: '10px',
-            height: '20%',
-            overflow: 'auto',
-            fontFamily: '"Silkscreen", monospace'
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <strong>CONSOLE:</strong>
-            <button onClick={handleClearConsole}>CLEAR</button>
-          </div>
-          <pre>{consoleOutput}</pre>
+        <div style={{ flex: 1, backgroundColor: '#1E1438', padding: '20px', borderRadius: '8px', border: '2px solid #F765A0' }}>
+          {['ユーザー1', 'ユーザー2', 'ユーザー3'].map((name, index) => (
+            <div key={index} style={{ marginBottom: '10px', color: '#fff' }}>
+              <strong>{`Name: ${name}`}</strong>
+              <iframe style={{ width: '100%', height: '100px', borderRadius: '8px', border: '1px solid #ccc' }}></iframe>
+            </div>
+          ))}
         </div>
       </div>
 
-      <iframe
-        id="preview"
-        ref={iframeRef}
-        sandbox="allow-scripts allow-same-origin"
-        style={{
-          width: '50%',
-          height: '100%',
-          border: 'none',
-          backgroundColor: '#fff',
-          fontFamily: '"Silkscreen", monospace',
-        }}
-      ></iframe>
+      {/* エディタ部分 */}
+      <div style={{ width: '40%', backgroundColor: '#151454', padding: '30px', borderRadius: '8px', border: '2px solid #F765A0' }}>
+        <div ref={editorRef} style={{ height: '70%', overflow: 'auto', backgroundColor: '#271D42', borderRadius: '8px', padding: '10px' }} />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px', marginTop: '20px' }}>
+          <button style={{ backgroundColor: '#3341DF', color: '#A7F002', border: 'none', padding: '5px 15px', borderRadius: '5px', cursor: 'pointer' }} onClick={handleSaveCode}>SAVE</button>
+          <button style={{ backgroundColor: '#3341DF', color: '#A7F002', border: 'none', padding: '5px 15px', borderRadius: '5px', cursor: 'pointer' }} onClick={handleExecuteCode}>PLAY</button>
+        </div>
+
+        <div style={{ backgroundColor: '#1E1438', padding: '10px', borderRadius: '8px', marginTop: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <strong style={{ color: 'white', fontSize: '14px' }}>CONSOLE</strong>
+            <button style={{ color: 'white', fontSize: '14px' }} onClick={handleClearConsole}>CLEAR</button>
+          </div>
+        </div>
+
+        <pre style={{ backgroundColor: '#271D42', padding: '40px', color: 'white' }}>{consoleOutput}</pre>
+      </div>
+
+      <iframe id="preview" ref={iframeRef} sandbox="allow-scripts allow-same-origin" style={{ width: '40%', height: '100%', borderRadius: '8px', backgroundColor: '#fff', marginLeft: '10px' }}></iframe>
     </div>
   );
 };
