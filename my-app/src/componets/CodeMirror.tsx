@@ -6,31 +6,34 @@ import { EditorState } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
 import { keymap } from '@codemirror/view';
 import { defaultKeymap } from '@codemirror/commands';
-import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
+import {
+  syntaxHighlighting,
+  defaultHighlightStyle,
+} from '@codemirror/language';
 import useAuth from '../../firebase/useAuth';
 import { useRouter } from 'next/navigation';
 import { saveCode } from '../../firebase/saveCode';
 import { getCode } from '../../firebase/getCode';
 
 const customLineNumberTheme = EditorView.theme({
-  ".cm-lineNumbers": {
-    backgroundColor: "#271D42",
+  '.cm-lineNumbers': {
+    backgroundColor: '#271D42',
     fontFamily: '"Silkscreen", monospace',
-    color: "white",
-    fontSize: "16px",
-    paddingRight: "5px",
-    width: "35px",
+    color: 'white',
+    fontSize: '16px',
+    paddingRight: '5px',
+    width: '35px',
   },
-  ".cm-gutters": {
-    width: "35px",
+  '.cm-gutters': {
+    width: '35px',
   },
 });
 
 const customEditorTheme = EditorView.theme({
-  ".cm-content": {
-    backgroundColor: "#271D42",
-    color: "white",
-    fontFamily: "monospace",
+  '.cm-content': {
+    backgroundColor: '#271D42',
+    color: 'white',
+    fontFamily: 'monospace',
   },
 });
 
@@ -43,10 +46,12 @@ const CodeMirrorEditor: React.FC = () => {
   const [code, setCode] = useState<string>('');
   const [consoleOutput, setConsoleOutput] = useState<string>('');
 
+  const event_now = 'event_1';
+
   useEffect(() => {
     const loadCode = async () => {
       if (!user) return;
-      const savedCode = await getCode(user.uid);
+      const savedCode = await getCode(user.uid, event_now);
       const initialDoc = savedCode || '';
 
       if (editorRef.current) {
@@ -83,7 +88,7 @@ const CodeMirrorEditor: React.FC = () => {
   const handleSaveCode = async () => {
     if (user && editorView) {
       const newCode = editorView.state.doc.toString();
-      await saveCode(newCode, user.uid);
+      await saveCode(newCode, user.uid, event_now);
       setCode(newCode);
     } else {
       console.log('ログインしていません');
@@ -143,44 +148,170 @@ const CodeMirrorEditor: React.FC = () => {
   const handleClearConsole = () => setConsoleOutput('');
 
   return (
-    <div style={{ display: 'flex', height: '100vh', padding: '20px', gap: '20px', backgroundColor: '#060038' }}>
+    <div
+      style={{
+        display: 'flex',
+        height: '100vh',
+        padding: '20px',
+        gap: '20px',
+        backgroundColor: '#060038',
+      }}
+    >
       {/* 左側の情報セクション */}
-      <div style={{ width: '20%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div style={{ backgroundColor: '#1E1438', padding: '20px', borderRadius: '8px', border: '2px solid #F765A0' }}>
-          <h1 style={{ fontFamily: 'Suez One', fontSize: '40px', color: '#A7F002' }}>MONSTOR</h1>
+      <div
+        style={{
+          width: '20%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: '#1E1438',
+            padding: '20px',
+            borderRadius: '8px',
+            border: '2px solid #F765A0',
+          }}
+        >
+          <h1
+            style={{
+              fontFamily: 'Suez One',
+              fontSize: '40px',
+              color: '#A7F002',
+            }}
+          >
+            MONSTOR
+          </h1>
           <p style={{ color: '#fff' }}>FROM: 10/28</p>
           <p style={{ color: '#fff' }}>TO: 10/31</p>
         </div>
 
-        <div style={{ flex: 1, backgroundColor: '#1E1438', padding: '20px', borderRadius: '8px', border: '2px solid #F765A0' }}>
+        <div
+          style={{
+            flex: 1,
+            backgroundColor: '#1E1438',
+            padding: '20px',
+            borderRadius: '8px',
+            border: '2px solid #F765A0',
+          }}
+        >
           {['ユーザー1', 'ユーザー2', 'ユーザー3'].map((name, index) => (
             <div key={index} style={{ marginBottom: '10px', color: '#fff' }}>
               <strong>{`Name: ${name}`}</strong>
-              <iframe style={{ width: '100%', height: '100px', borderRadius: '8px', border: '1px solid #ccc' }}></iframe>
+              <iframe
+                style={{
+                  width: '100%',
+                  height: '100px',
+                  borderRadius: '8px',
+                  border: '1px solid #ccc',
+                }}
+              ></iframe>
             </div>
           ))}
         </div>
       </div>
 
       {/* エディタ部分 */}
-      <div style={{ width: '40%', backgroundColor: '#151454', padding: '30px', borderRadius: '8px', border: '2px solid #F765A0' }}>
-        <div ref={editorRef} style={{ height: '70%', overflow: 'auto', backgroundColor: '#271D42', borderRadius: '8px', padding: '10px' }} />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px', marginTop: '20px' }}>
-          <button style={{ backgroundColor: '#3341DF', color: '#A7F002', border: 'none', padding: '5px 15px', borderRadius: '5px', cursor: 'pointer' }} onClick={handleSaveCode}>SAVE</button>
-          <button style={{ backgroundColor: '#3341DF', color: '#A7F002', border: 'none', padding: '5px 15px', borderRadius: '5px', cursor: 'pointer' }} onClick={handleExecuteCode}>PLAY</button>
+      <div
+        style={{
+          width: '40%',
+          backgroundColor: '#151454',
+          padding: '30px',
+          borderRadius: '8px',
+          border: '2px solid #F765A0',
+        }}
+      >
+        <div
+          ref={editorRef}
+          style={{
+            height: '70%',
+            overflow: 'auto',
+            backgroundColor: '#271D42',
+            borderRadius: '8px',
+            padding: '10px',
+          }}
+        />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '20px',
+            marginTop: '20px',
+          }}
+        >
+          <button
+            style={{
+              backgroundColor: '#3341DF',
+              color: '#A7F002',
+              border: 'none',
+              padding: '5px 15px',
+              borderRadius: '5px',
+              cursor: 'pointer',
+            }}
+            onClick={handleSaveCode}
+          >
+            SAVE
+          </button>
+          <button
+            style={{
+              backgroundColor: '#3341DF',
+              color: '#A7F002',
+              border: 'none',
+              padding: '5px 15px',
+              borderRadius: '5px',
+              cursor: 'pointer',
+            }}
+            onClick={handleExecuteCode}
+          >
+            PLAY
+          </button>
         </div>
 
-        <div style={{ backgroundColor: '#1E1438', padding: '10px', borderRadius: '8px', marginTop: '20px' }}>
+        <div
+          style={{
+            backgroundColor: '#1E1438',
+            padding: '10px',
+            borderRadius: '8px',
+            marginTop: '20px',
+          }}
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <strong style={{ color: 'white', fontSize: '14px' }}>CONSOLE</strong>
-            <button style={{ color: 'white', fontSize: '14px' }} onClick={handleClearConsole}>CLEAR</button>
+            <strong style={{ color: 'white', fontSize: '14px' }}>
+              CONSOLE
+            </strong>
+            <button
+              style={{ color: 'white', fontSize: '14px' }}
+              onClick={handleClearConsole}
+            >
+              CLEAR
+            </button>
           </div>
         </div>
 
-        <pre style={{ backgroundColor: '#271D42', padding: '40px', color: 'white' }}>{consoleOutput}</pre>
+        <pre
+          style={{
+            backgroundColor: '#271D42',
+            padding: '40px',
+            color: 'white',
+          }}
+        >
+          {consoleOutput}
+        </pre>
       </div>
 
-      <iframe id="preview" ref={iframeRef} sandbox="allow-scripts allow-same-origin" style={{ width: '40%', height: '100%', borderRadius: '8px', backgroundColor: '#fff', marginLeft: '10px' }}></iframe>
+      <iframe
+        id="preview"
+        ref={iframeRef}
+        sandbox="allow-scripts allow-same-origin"
+        style={{
+          width: '40%',
+          height: '100%',
+          borderRadius: '8px',
+          backgroundColor: '#fff',
+          marginLeft: '10px',
+        }}
+      ></iframe>
     </div>
   );
 };
