@@ -17,7 +17,6 @@ const useAuth = ( router:any ) => {
         } else {
           const appUser: User = {
             uid: firebaseUser.uid,
-            id: firebaseUser.uid,
             name: firebaseUser.displayName || '',
             photoURL: firebaseUser.photoURL || '',
             email: firebaseUser.email || '',

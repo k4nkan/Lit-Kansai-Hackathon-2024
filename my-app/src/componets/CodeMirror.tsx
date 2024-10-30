@@ -46,7 +46,7 @@ const CodeMirrorEditor: React.FC = () => {
   useEffect(() => {
     const loadCode = async () => {
       if (!user) return;
-      const savedCode = await getCode(user.id);
+      const savedCode = await getCode(user.uid);
       const initialDoc = savedCode || '';
 
       if (editorRef.current) {
@@ -83,7 +83,7 @@ const CodeMirrorEditor: React.FC = () => {
   const handleSaveCode = async () => {
     if (user && editorView) {
       const newCode = editorView.state.doc.toString();
-      await saveCode(newCode, user.id);
+      await saveCode(newCode, user.uid);
       setCode(newCode);
     } else {
       console.log('ログインしていません');
