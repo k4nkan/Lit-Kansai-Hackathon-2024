@@ -47,17 +47,11 @@ export default function Home() {
           <Link href="/top">Top Page</Link>
         </li>
         <li>
-          <Link href="/about">About</Link>
-        </li>
-        <li>
-          <Link href="/connect">Connect</Link>
-        </li>
-        <li>
           <Link href="/coding">Coding</Link>
         </li>
       </ul>
       <a href="/top" onClick={signOut}>
-        {waiting ? 'ログアウト中...' : 'ログアウト'}
+        {waiting ? 'now loading' : 'log out'}
       </a>
     </div>
   );
