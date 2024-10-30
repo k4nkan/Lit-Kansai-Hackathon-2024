@@ -12,9 +12,10 @@ const Dashboard: React.FC = () => {
       className="w-11/12 max-w-[1489px] mx-auto p-8 rounded-2xl bg-[#060038] flex flex-col gap-8 relative"
       style={{ border: '4px solid #F765A0', borderRadius: '16px' }} // 全体の縁線
     >
-      <div className="flex justify-between gap-32">
+      
+      <div className="flex justify-between gap-32 dashboard-border h-full">
         {/* 左側の統計情報 */}
-        <div className="relative" style={{ marginLeft: '5%' }}>
+        <div className="relative flex flex-col items-center" style={{ marginLeft: '5%' }}>
           <div
             className="absolute top-0 left-0 bg-[#A7F002] rounded-lg w-40 flex justify-between items-center shadow-md"
             style={{ 
@@ -31,7 +32,7 @@ const Dashboard: React.FC = () => {
           {/* グリッドエリア */}
           <div 
             className="grid grid-cols-2 gap-8 place-items-center" 
-            style={{ marginTop: '20%' }} 
+            style={{ marginTop: '40%' }} 
           >
             {[
               { label: 'PEOPLE', value: 40, icon: '🧑' },
@@ -44,7 +45,9 @@ const Dashboard: React.FC = () => {
                 className="bg-[#271D42] rounded-xl w-32 h-32 flex flex-col items-center justify-center text-center"
               >
                 <div className="text-[#A7F002] text-lg">{item.label}</div>
-                <div className="text-2xl">{item.icon}</div>
+                <div className="text-2xl">
+                  {item.icon}
+                </div>
                 <div
                   className="text-6xl font-bold text-[#F765A0]"
                   style={{ fontFamily: 'Wendy One, sans-serif' }}
@@ -57,25 +60,56 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* 右側のメインエリア */}
-        <div className="flex-1 bg-[#1E1438] rounded-2xl p-12 flex flex-col gap-y-20">
+        <div className="relative flex-1 bg-[#1E1438] rounded-2xl p-8 flex flex-col gap-y-20 mt-11 mr-9"
+          style={{
+            height: 'auto',
+            transform: 'translateX(-40px)',
+          }}
+        >
           {/* テキストコンテンツを左揃えに */}
           <div className="text-left">
-            <h1 className="text-8xl font-bold text-[#A7F002]" style={{ fontFamily: 'Suez One' }}>
-              MONSTOR
+            <h1
+              className="font-bold text-[#A7F002]"
+              style={{
+                fontFamily: 'Suez One',
+                fontSize: '10rem', // さらに大きく
+                lineHeight: '1',   // 行間を狭める
+              }}
+            >
+              MONS<br />TOR
             </h1>
-            <div className="text-gray-300 mt-4">FROM: 10/28 TO: 10/31</div>
-
-            {/* 2 DAYS LEFT の部分 */}
-            <div className="text-[#F765A0] text-2xl font-bold mt-10">
-              2 DAYS LEFT
+            <div className="mt-4 text-lg">
+              <span style={{ color: '#A7F002' }}>FROM:</span>
+              <span style={{ color: '#3242DC', marginLeft: '8px' }}>10/28</span>
+              <span style={{ color: '#A7F002', marginLeft: '16px' }}>TO:</span>
+              <span style={{ color: '#3242DC', marginLeft: '8px' }}>10/31</span>
             </div>
           </div>
 
           {/* ボタンを右揃えに */}
-          <div className="flex justify-end mt-4">
-            <button className="bg-[#4255FF] text-[#A7F002] font-bold px-20 py-4 rounded-lg">
+            <button
+              className="bg-[#4255FF] text-[#A7F002] font-bold px-12 py-4 rounded-lg absolute"
+              style={{
+                bottom: '30px',
+                right: '-70px',
+                zIndex: '9',
+                border: '2px solid #A7F002', // 外枠の線
+                borderRadius: '0',
+              }}
+            >
               START CODING
             </button>
+
+          {/* 2 DAYS LEFT をメインエリアの外に配置 */}
+          <div
+            className="absolute text-[#A7F002] text-5xl font-bold"
+            style={{
+              top: '-60px',       // メインエリアの上部に揃える
+              left: '50px',    // 左にずらしてメインエリアの外に配置
+              zIndex: '10',      // 他の要素よりも上に配置
+            }}
+          >
+            2 DAYS LEFT
           </div>
         </div>
       </div>
