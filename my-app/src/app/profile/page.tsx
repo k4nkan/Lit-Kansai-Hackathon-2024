@@ -4,6 +4,7 @@ import { useAuth } from '../../../context/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Header from "@/componets/hedder";
+import ArchiveCardList from '@/componets/ArchiveCardList';
 
 const Profile = () => {
   const user = useAuth();
@@ -21,14 +22,15 @@ const Profile = () => {
   }
 
   return (
-    <div>
+    <div className="bg-[#060038] min-h-screen">
       <Header />
-      <main className="p-8">
-        <section className="bg-[#151454] text-[#F765A0] p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-          <h1 className="text-4xl font-bold mb-4">Profile</h1>
-          <p className="text-lg mb-2"><strong>Name:</strong> {user.name}</p>
-          <p className="text-lg mb-2"><strong>Email:</strong> {user.email}</p>
-        </section>
+      <main className="p-8 flex flex-col items-center">
+        <div className="text-center mt-8 mb-12">
+          <h1 className="text-6xl font-bold mb-8" style={{ color: '#A7F002' }}>
+            NAME: {user.name || 'N/A'}
+          </h1>
+        </div>
+        <ArchiveCardList />
       </main>
     </div>
   );
