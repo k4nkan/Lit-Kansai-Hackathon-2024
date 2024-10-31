@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Header from '@/componets/hedder';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/auth';
@@ -60,6 +61,7 @@ export default function Home() {
 
   return (
     <div>
+      <Header/>
       <div>this is top page</div>
       <ul>
         <li>

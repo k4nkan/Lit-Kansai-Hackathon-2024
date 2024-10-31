@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 const Header = () => {
   return (
@@ -7,9 +8,9 @@ const Header = () => {
         SERVICE NAME
       </div>
       <nav className="nav-links flex gap-6">
-        <a href="#home" className="hover:glow-effect" style={{ color: '#F765A0', textDecoration: 'none' }}>HOME</a>
-        <a href="#cording" className="hover:glow-effect" style={{ color: '#F765A0', textDecoration: 'none' }}>CORDING</a>
-        <a href="#profile" className="hover:glow-effect" style={{ color: '#F765A0', textDecoration: 'none' }}>PROFILE</a>
+        <Link href="/top" className="hover:glow-effect" style={{ color: '#F765A0', textDecoration: 'none' }}>Home</Link>
+        <Link href="/coding" className="hover:glow-effect" style={{ color: '#F765A0', textDecoration: 'none' }}>Coding</Link>
+        <Link href="/profile" className="hover:glow-effect" style={{ color: '#F765A0', textDecoration: 'none' }}>Profile</Link>
       </nav>
     </header>
   );
