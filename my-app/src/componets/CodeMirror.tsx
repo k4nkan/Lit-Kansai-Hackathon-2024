@@ -57,6 +57,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_no
   const [editorView, setEditorView] = useState<EditorView | null>(null);
   const [code, setCode] = useState<string>('');
   const [consoleOutput, setConsoleOutput] = useState<string>('');
+  const [isSwapped, setIsSwapped] = useState<boolean>(false); // レイアウト切り替え用のステート
 
   useEffect(() => {
     const loadCode = async () => {
@@ -65,36 +66,42 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_no
       const initialDoc = savedCode || '';
 
       if (editorRef.current) {
-        const state = EditorState.create({
-          doc: initialDoc,
-          extensions: [
-            javascript(),
-            lineNumbers(),
-            highlightActiveLine(),
-            syntaxHighlighting(defaultHighlightStyle),
-            customHighlightTheme, // カスタムテーマを追加
-            customLineNumberTheme,
-            customEditorTheme,
-            EditorView.lineWrapping,
-            keymap.of(defaultKeymap),
-            EditorView.editable.of(true),
-          ],
-        });
+        // 編集ビューが未設定かどうかを確認して、重複して作成されないようにする
+        if (!editorView) {
+          const state = EditorState.create({
+            doc: initialDoc,
+            extensions: [
+              javascript(),
+              lineNumbers(),
+              highlightActiveLine(),
+              syntaxHighlighting(defaultHighlightStyle),
+              customHighlightTheme,
+              customLineNumberTheme,
+              customEditorTheme,
+              EditorView.lineWrapping,
+              keymap.of(defaultKeymap),
+              EditorView.editable.of(true),
+            ],
+          });
 
-        const view = new EditorView({
-          state,
-          parent: editorRef.current,
-        });
+          const view = new EditorView({
+            state,
+            parent: editorRef.current,
+          });
 
-        setEditorView(view);
-        setCode(initialDoc);
+          setEditorView(view);
+          setCode(initialDoc);
 
-        return () => view.destroy();
+          // エディタが複数回初期化されるのを防ぐ
+          return () => {
+            view.destroy();
+            setEditorView(null);
+          };
+        }
       }
     };
-
     loadCode();
-  }, [user]);
+  }, [user, editorView]);
 
   const handleSaveCode = async () => {
     if (user && editorView) {
@@ -157,6 +164,10 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_no
   }, []);
 
   const handleClearConsole = () => setConsoleOutput('');
+
+  const handleSwapLayout = () => {
+    setIsSwapped((prev) => !prev);
+  };
 
   return (
     <div
@@ -325,108 +336,176 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_no
         </div>
       </div>
 
-      {/* エディタ部分 */}
-      <div
-        style={{
-          width: '40%',
-          backgroundColor: '#151454',
-          padding: '30px',
-          borderRadius: '8px',
-          border: '2px solid #F765A0',
-        }}
-      >
-        <div
-          ref={editorRef}
-          style={{
-            height: '70%',
-            overflow: 'auto',
-            backgroundColor: '#271D42',
-            borderRadius: '8px',
-            padding: '10px',
-          }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '20px',
-            marginTop: '20px',
-          }}
-        >
-          <button
+      {/* エディタとプレビュー */}
+      {!isSwapped ? (
+        <>
+          {/* 元のレイアウト */}
+          <div
             style={{
-              backgroundColor: '#3341DF',
-              color: '#A7F002',
-              border: 'none',
-              padding: '5px 15px',
-              borderRadius: '5px',
-              cursor: 'pointer',
+              width: '40%',
+              backgroundColor: '#151454',
+              padding: '30px',
+              borderRadius: '8px',
+              border: '2px solid #F765A0',
             }}
-            onClick={handleSaveCode}
           >
-            SAVE
-          </button>
-          <button
-            style={{
-              backgroundColor: '#3341DF',
-              color: '#A7F002',
-              border: 'none',
-              padding: '5px 15px',
-              borderRadius: '5px',
-              cursor: 'pointer',
-            }}
-            onClick={handleExecuteCode}
-          >
-            PLAY
-          </button>
-        </div>
-
-        <div
-          style={{
-            backgroundColor: '#1E1438',
-            padding: '10px',
-            borderRadius: '8px',
-            marginTop: '20px',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <strong style={{ color: 'white', fontSize: '14px' }}>
-              CONSOLE
-            </strong>
-            <button
-              style={{ color: 'white', fontSize: '14px' }}
-              onClick={handleClearConsole}
+            <div
+              ref={editorRef}
+              style={{
+                height: '70%',
+                overflow: 'auto',
+                backgroundColor: '#271D42',
+                borderRadius: '8px',
+                padding: '10px',
+              }}
+            />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '20px',
+                marginTop: '20px',
+              }}
             >
-              CLEAR
+              <button
+                style={{
+                  backgroundColor: '#3341DF',
+                  color: '#A7F002',
+                  border: 'none',
+                  padding: '5px 15px',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                }}
+                onClick={handleSwapLayout}
+              >
+                ↔︎
+              </button>
+              <button
+                style={{
+                  backgroundColor: '#3341DF',
+                  color: '#A7F002',
+                  border: 'none',
+                  padding: '5px 15px',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                }}
+                onClick={handleSaveCode}
+              >
+                SAVE
+              </button>
+              <button
+                style={{
+                  backgroundColor: '#3341DF',
+                  color: '#A7F002',
+                  border: 'none',
+                  padding: '5px 15px',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                }}
+                onClick={handleExecuteCode}
+              >
+                PLAY
+              </button>
+            </div>
+
+            <div
+              style={{
+                backgroundColor: '#1E1438',
+                padding: '10px',
+                borderRadius: '8px',
+                marginTop: '20px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <strong style={{ color: 'white', fontSize: '14px' }}>
+                  CONSOLE
+                </strong>
+                <button
+                  style={{ color: 'white', fontSize: '14px' }}
+                  onClick={handleClearConsole}
+                >
+                  CLEAR
+                </button>
+              </div>
+            </div>
+
+            <pre
+              style={{
+                backgroundColor: '#271D42',
+                padding: '20px',
+                color: 'white',
+                height: '20px',
+                overflowY: 'auto',
+              }}
+            >
+              {consoleOutput}
+            </pre>
+          </div>
+
+          <iframe
+            id="preview"
+            ref={iframeRef}
+            sandbox="allow-scripts allow-same-origin"
+            style={{
+              width: '40%',
+              height: '100%',
+              borderRadius: '8px',
+              backgroundColor: '#151454',
+              marginLeft: '10px',
+            }}
+          ></iframe>
+        </>
+      ) : (
+        <>
+          {/* 切り替え後の4分割プレビュー */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', flex: 1 }}>
+            {[1, 2, 3, 4].map((index) => (
+              <iframe
+                key={index}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '8px',
+                  backgroundColor: '#151454',
+                  margin: 0, // 余白を削除
+                  padding: 0, // パディングを削除
+                }}
+                srcDoc={`
+                  <html>
+                    <head>
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+                    </head>
+                    <body>
+                      <script>
+                        try {
+                          ${code}
+                        } catch (error) {
+                          console.error('プレビューエラー:', error);
+                        }
+                      </script>
+                    </body>
+                  </html>
+                `}
+              ></iframe>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '10px' }}>
+            <button
+              style={{
+                backgroundColor: '#3341DF',
+                color: '#A7F002',
+                border: 'none',
+                padding: '5px 15px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+              }}
+              onClick={handleSwapLayout}
+            >
+              ⬅︎
             </button>
           </div>
-        </div>
-
-        <pre
-          style={{
-            backgroundColor: '#271D42',
-            padding: '20px',
-            color: 'white',
-            height: '20px',
-            overflowY: 'auto',
-          }}
-        >
-          {consoleOutput}
-        </pre>
-      </div>
-
-      <iframe
-        id="preview"
-        ref={iframeRef}
-        sandbox="allow-scripts allow-same-origin"
-        style={{
-          width: '40%',
-          height: '100%',
-          borderRadius: '8px',
-          backgroundColor: '#151454',
-          marginLeft: '10px',
-        }}
-      ></iframe>
+        </>
+      )}
     </div>
   );
 };
