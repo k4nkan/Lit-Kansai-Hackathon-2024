@@ -49,7 +49,7 @@ interface CodeMirrorEditorProps {
   group_now: string;
 }
 
-const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}) => {
+const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_now }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const router = useRouter();
@@ -175,7 +175,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
           display: 'flex',
           flexDirection: 'column',
           gap: '20px',
-          position: 'relative', // 追加
+          position: 'relative',
         }}
       >
         {/* 2 DAYS LEFT ボタン */}
@@ -200,11 +200,11 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
         <div
           style={{
             padding: '20px',
-            paddingTop:'50px',
+            paddingTop: '50px',
             height: '30vh',
             backgroundColor: '#271D42',
-            clipPath: 'polygon(10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%, 0% 10%)', // 左上と右下をカット
-            width: '20vw', // 折り返しのために幅を調整
+            clipPath: 'polygon(10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%, 0% 10%)',
+            width: '20vw',
           }}
         >
           <h1
@@ -214,45 +214,114 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
               color: '#A7F002',
               textShadow: '4px 4px 8px rgba(0, 0, 0, 0.5)',
               letterSpacing: '2px',
-              wordBreak: 'break-word', // 折り返しを有効にする
-              whiteSpace: 'normal', // 折り返しをサポート
-              margin: 0, // 上下の余白を調整
-              lineHeight: '0.8', // 行間を小さくする
+              wordBreak: 'break-word',
+              whiteSpace: 'normal',
+              margin: 0,
+              lineHeight: '0.8',
+              marginBottom: '20px',
             }}
           >
-            MONSTOR
+            STAR
           </h1>
           <p style={{ color: '#fff' }}>
-            <span style={{ color: '#3242DC' }}>FROM:</span> 
+            <span style={{ color: '#3242DC' }}>FROM:</span>
             <span style={{ color: '#A7F002' }}> 10/28</span>
           </p>
           <p style={{ color: '#fff' }}>
-            <span style={{ color: '#3242DC' }}>TO:</span> 
+            <span style={{ color: '#3242DC' }}>TO:</span>
             <span style={{ color: '#A7F002' }}> 10/31</span>
           </p>
         </div>
 
-
+        {/* 自分のプレビュー表示 */}
         <div
           style={{
             flex: 1,
             padding: '20px',
-            height:'20vh',
+            height: '20vh',
           }}
         >
-          {['ユーザー1', 'ユーザー2', 'ユーザー3'].map((name, index) => (
-            <div key={index} style={{ marginBottom: '10px', color: '#fff' }}>
-              <strong className="user-name">{`Name: ${name}`}</strong>
-              <iframe
-                style={{
-                  width: '100%',
-                  height: '8vh',
-                  borderRadius: '8px',
-                  border: '1px solid #ccc',
-                }}
-              ></iframe>
-            </div>
-          ))}
+          <div style={{ marginBottom: '10px', color: '#fff' }}>
+            <strong className="user-name">Name: ユーザー1</strong>
+            <iframe
+              style={{
+                width: '100%',
+                height: '8vh',
+                borderRadius: '8px',
+                border: '1px solid #ccc',
+              }}
+              srcDoc={`
+                <html>
+                  <head>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+                  </head>
+                  <body>
+                    <script>
+                      try {
+                        ${code}
+                      } catch (error) {
+                        console.error('プレビューエラー:', error);
+                      }
+                    </script>
+                  </body>
+                </html>
+              `}
+            ></iframe>
+          </div>
+          <div style={{ marginBottom: '10px', color: '#fff' }}>
+            <strong className="user-name">Name: ユーザー2</strong>
+            <iframe
+              style={{
+                width: '100%',
+                height: '8vh',
+                borderRadius: '8px',
+                border: '1px solid #ccc',
+              }}
+              srcDoc={`
+                <html>
+                  <head>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+                  </head>
+                  <body>
+                    <script>
+                      try {
+                        ${code}
+                      } catch (error) {
+                        console.error('プレビューエラー:', error);
+                      }
+                    </script>
+                  </body>
+                </html>
+              `}
+            ></iframe>
+          </div>
+          <div style={{ marginBottom: '10px', color: '#fff' }}>
+            <strong className="user-name">Name: ユーザー3</strong>
+            <iframe
+              style={{
+                width: '100%',
+                height: '8vh',
+                borderRadius: '8px',
+                border: '1px solid #ccc',
+              }}
+              srcDoc={`
+                <html>
+                  <head>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+                  </head>
+                  <body>
+                    <script>
+                      try {
+                        ${code}
+                      } catch (error) {
+                        console.error('プレビューエラー:', error);
+                      }
+                    </script>
+                  </body>
+                </html>
+              `}
+            ></iframe>
+          </div>
         </div>
       </div>
 
@@ -336,8 +405,10 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
         <pre
           style={{
             backgroundColor: '#271D42',
-            padding: '40px',
+            padding: '20px',
             color: 'white',
+            height: '20px',
+            overflowY: 'auto',
           }}
         >
           {consoleOutput}
