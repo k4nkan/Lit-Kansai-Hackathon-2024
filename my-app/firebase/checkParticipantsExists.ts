@@ -25,6 +25,7 @@ export const getParticipantGroupInEvent = async (
       return participantData.group || null;
     } else {
       console.log('該当するparticipantが見つかりません');
+      console.log(uid);
       return null;
     }
   } catch (error) {
