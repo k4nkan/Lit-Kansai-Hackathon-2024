@@ -1,35 +1,54 @@
 'use client';
 
-import React from 'react';
-
-// ボタン画像をインポート
+import React, { useState, useEffect } from 'react';
+import { getEvent } from '../../firebase/getEvent';
+import { useAuth } from '../../context/auth';
+import Link from 'next/link'; // Link をインポート
 import LeftButton from '../assets/images/leftbutton.svg';
 import RightButton from '../assets/images/rightbutton.svg';
 
-const Dashboard: React.FC = () => {
+const eventIds = ['event_5'];
+
+interface DashboardProps {}
+
+const Dashboard: React.FC<DashboardProps> = () => {
+  const user = useAuth();
+  const [eventThemes, setEventThemes] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchAllEventData = async () => {
+      const themes: string[] = [];
+      for (const eventId of eventIds) {
+        try {
+          const data = await getEvent(eventId);
+          if (data && data.theme) {
+            themes.push(data.theme);
+          }
+        } catch (error) {
+          console.error(`Failed to get event data for ${eventId}:`, error);
+        }
+      }
+      setEventThemes(themes);
+    };
+
+    fetchAllEventData();
+  }, []);
+
   return (
     <div 
       className="w-11/12 max-w-[1489px] mx-auto p-8 rounded-2xl bg-[#060038] flex flex-col gap-8 relative"
-      style={{ border: '4px solid #F765A0', borderRadius: '16px' }} // 全体の縁線
+      style={{ border: '4px solid #F765A0', borderRadius: '16px' }}
     >
-      
       <div className="flex justify-between gap-32 dashboard-border h-full">
-        {/* 左側の統計情報 */}
         <div className="relative flex flex-col items-center" style={{ marginLeft: '5%' }}>
           <div
             className="absolute top-0 left-0 bg-[#A7F002] rounded-lg w-40 flex justify-between items-center shadow-md"
-            style={{ 
-              transform: 'translate(-20%, -120%)', 
-              width: '250px', 
-              height: '50px', 
-              padding: '0 12px' 
-            }}
+            style={{ transform: 'translate(-20%, -120%)', width: '250px', height: '50px', padding: '0 12px' }}
           >
-            <span className="font-bold text-sm">NAME:</span>
-            <span className="font-bold text-2xl">XXX</span>
+            <span className="font-bold text-sm"style={{ color: '#3341DF', fontSize: '1.5rem'}}>NAME:</span>
+            <span className="user-name"style={{ color: '#3341DF',fontSize:'1.5rem' }}>{user?.name || 'N/A'}</span>
           </div>
 
-          {/* グリッドエリア */}
           <div 
             className="grid grid-cols-2 gap-8 place-items-center" 
             style={{ marginTop: '40%' }} 
@@ -45,9 +64,7 @@ const Dashboard: React.FC = () => {
                 className="bg-[#271D42] rounded-xl w-32 h-32 flex flex-col items-center justify-center text-center"
               >
                 <div className="text-[#A7F002] text-lg">{item.label}</div>
-                <div className="text-2xl">
-                  {item.icon}
-                </div>
+                <div className="text-2xl">{item.icon}</div>
                 <div
                   className="text-6xl font-bold text-[#F765A0]"
                   style={{ fontFamily: 'Wendy One, sans-serif' }}
@@ -59,62 +76,54 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* 右側のメインエリア */}
         <div className="relative flex-1 bg-[#1E1438] rounded-2xl p-8 flex flex-col gap-y-20 mt-11 mr-9"
-          style={{
-            height: 'auto',
-            transform: 'translateX(-40px)',
-          }}
+          style={{ height: 'auto', transform: 'translateX(-40px)' }}
         >
-          {/* テキストコンテンツを左揃えに */}
           <div className="text-left">
             <h1
               className="font-bold text-[#A7F002]"
               style={{
                 fontFamily: 'Suez One',
-                fontSize: '10rem', // さらに大きく
-                lineHeight: '1',   // 行間を狭める
+                fontSize: '10rem',
+                lineHeight: '1',
+                textShadow: '4px 4px 8px rgba(0, 0, 0, 0.5)',
               }}
             >
-              MONS<br />TOR
+              {eventThemes[0] || 'Loading...'}
             </h1>
             <div className="mt-4 text-lg">
-              <span style={{ color: '#A7F002' }}>FROM:</span>
-              <span style={{ color: '#3242DC', marginLeft: '8px' }}>10/28</span>
-              <span style={{ color: '#A7F002', marginLeft: '16px' }}>TO:</span>
-              <span style={{ color: '#3242DC', marginLeft: '8px' }}>10/31</span>
+              <span style={{ color: '#A7F002',marginLeft: '0.5rem', fontSize: '2rem'}}>FROM:</span>
+              <span style={{ color: '#3242DC', marginLeft: '0.5rem', fontSize: '2rem' }}>10/28</span>
+              <span style={{ color: '#A7F002', marginLeft: '0.5rem', fontSize: '2rem' }}>TO:</span>
+              <span style={{ color: '#3242DC', marginLeft: '0.5rem', fontSize: '2rem' }}>10/31</span>
             </div>
           </div>
 
-          {/* ボタンを右揃えに */}
-            <button
-              className="bg-[#4255FF] text-[#A7F002] font-bold px-12 py-4 rounded-lg absolute"
-              style={{
-                bottom: '30px',
-                right: '-70px',
-                zIndex: '9',
-                border: '2px solid #A7F002', // 外枠の線
-                borderRadius: '0',
-              }}
-            >
-              START CODING
-            </button>
+          {/* ページ遷移ボタン */}
+          <Link href="/coding">
+          <button
+          className="bg-[#4255FF] text-[#A7F002] font-bold px-12 py-4 rounded-lg absolute transition-transform duration-200 transform hover:scale-105"
+          style={{
+            bottom: '30px',
+            right: '-70px',
+            zIndex: 9,
+            border: '2px solid #A7F002',
+            borderRadius: '0',
+          }}
+        >
+          START CODING
+        </button>
+          </Link>
 
-          {/* 2 DAYS LEFT をメインエリアの外に配置 */}
           <div
             className="absolute text-[#A7F002] text-5xl font-bold"
-            style={{
-              top: '-60px',       // メインエリアの上部に揃える
-              left: '50px',    // 左にずらしてメインエリアの外に配置
-              zIndex: '10',      // 他の要素よりも上に配置
-            }}
+            style={{ top: '-60px', left: '50px', zIndex: '10' }}
           >
             2 DAYS LEFT
           </div>
         </div>
       </div>
 
-      {/* ナビゲーションとインジケーター */}
       <div className="relative mt-4 flex justify-end pr-80">
         <div className="flex items-center gap-12">
           <button className="w-12 h-12">
