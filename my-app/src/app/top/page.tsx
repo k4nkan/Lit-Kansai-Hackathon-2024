@@ -8,6 +8,9 @@ import { logout } from '@/lib/auth';
 import { useAuth } from '../../../context/auth';
 import { getEvent } from '../../../firebase/getEvent';
 import { getParticipantGroupInEvent } from '../../../firebase/checkParticipantsExists';
+import Dashboard from '@/componets/Dashboard';
+import CardList from '@/componets/cardlist';
+import ArchiveCardList from '@/componets/ArchiveCardList';
 
 export default function Home() {
   const [waiting, setWaiting] = useState<boolean>(false);
@@ -82,30 +85,35 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <Header />
-      <div>this is top page</div>
-      <ul>
-        <li>
-          <Link href="/top">Top Page</Link>
-        </li>
+    <div style={{ backgroundColor: '#060038', color: '#FFFFFF', padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <Header />
+      </div>
+      <div style={{ marginBottom: '200px' }}>
+        <Dashboard />
+      </div>
+      <div style={{ marginBottom: '200px' }}>
+        <CardList />
+      </div>
+      <div style={{ marginBottom: '200px' }}>
+        <ArchiveCardList />
+      </div>
+      <ul style={{ marginBottom: '20px' }}>
         <li>
           <a href="/coding" onClick={handleNavigation}>
             Coding
           </a>
         </li>
       </ul>
-      <br />
       {eventData ? (
-        <div>
-          <div>start at:{eventData.start}</div>
-          <div>end at:{eventData.end}</div>
-          <div>theme:{eventData.theme}</div>
+        <div style={{ marginBottom: '20px' }}>
+          <div>start at: {eventData.start}</div>
+          <div>end at: {eventData.end}</div>
+          <div>theme: {eventData.theme}</div>
         </div>
       ) : (
-        <div>now loading...</div>
+        <div style={{ marginBottom: '20px' }}>now loading...</div>
       )}
-      <br />
       <a href="/top" onClick={signOut}>
         {waiting ? 'now loading' : 'log out'}
       </a>
