@@ -167,14 +167,31 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
           display: 'flex',
           flexDirection: 'column',
           gap: '20px',
+          position: 'relative', // 追加
         }}
       >
+        {/* 2 DAYS LEFT ボタン */}
         <div
           style={{
-            backgroundColor: '#1E1438',
-            padding: '20px',
+            position: 'absolute',
+            top: '-30px',
+            left: '20px',
+            backgroundColor: '#3341DF',
+            color: '#A7F002',
+            padding: '10px 15px',
             borderRadius: '8px',
-            border: '2px solid #F765A0',
+            fontFamily: 'Silkscreen, monospace',
+            fontWeight: 'bold',
+            fontSize: '20px',
+            zIndex: '10',
+          }}
+        >
+          2 DAYS LEFT
+        </div>
+
+        <div
+          style={{
+            padding: '20px',
           }}
         >
           <h1
@@ -193,10 +210,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
         <div
           style={{
             flex: 1,
-            backgroundColor: '#1E1438',
             padding: '20px',
-            borderRadius: '8px',
-            border: '2px solid #F765A0',
           }}
         >
           {['ユーザー1', 'ユーザー2', 'ユーザー3'].map((name, index) => (
