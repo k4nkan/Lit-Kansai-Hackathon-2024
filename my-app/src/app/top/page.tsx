@@ -11,6 +11,7 @@ import { getParticipantGroupInEvent } from '../../../firebase/checkParticipantsE
 import Dashboard from '@/componets/Dashboard';
 import CardList from '@/componets/cardlist';
 import ArchiveCardList from '@/componets/ArchiveCardList';
+import { addGroup } from '../../../firebase/addGroup';
 
 export default function Home() {
   const [waiting, setWaiting] = useState<boolean>(false);
@@ -62,6 +63,9 @@ export default function Home() {
     e.preventDefault();
     if (group_now === null) {
       console.log('not yet');
+      if (user?.uid) {
+        addGroup(user?.uid, event_now);
+      }
     } else {
       router.push('/coding');
     }
@@ -85,7 +89,9 @@ export default function Home() {
   };
 
   return (
-    <div style={{ backgroundColor: '#060038', color: '#FFFFFF', padding: '20px' }}>
+    <div
+      style={{ backgroundColor: '#060038', color: '#FFFFFF', padding: '20px' }}
+    >
       <div style={{ marginBottom: '20px' }}>
         <Header />
       </div>
