@@ -37,7 +37,12 @@ const customEditorTheme = EditorView.theme({
   },
 });
 
-const CodeMirrorEditor: React.FC = () => {
+interface CodeMirrorEditorProps {
+  event_now: string;
+  group_now: string;
+}
+
+const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const router = useRouter();
@@ -45,8 +50,6 @@ const CodeMirrorEditor: React.FC = () => {
   const [editorView, setEditorView] = useState<EditorView | null>(null);
   const [code, setCode] = useState<string>('');
   const [consoleOutput, setConsoleOutput] = useState<string>('');
-
-  const event_now = 'event_1';
 
   useEffect(() => {
     const loadCode = async () => {
@@ -88,7 +91,7 @@ const CodeMirrorEditor: React.FC = () => {
   const handleSaveCode = async () => {
     if (user && editorView) {
       const newCode = editorView.state.doc.toString();
-      await saveCode(newCode, user.uid, event_now);
+      await saveCode(newCode, user.uid, group_now, event_now);
       setCode(newCode);
     } else {
       console.log('ログインしていません');
