@@ -29,6 +29,13 @@ const customLineNumberTheme = EditorView.theme({
   },
 });
 
+// カスタムハイライトカラー（白の透明度を下げた色）
+const customHighlightTheme = EditorView.theme({
+  ".cm-activeLine": {
+    backgroundColor: "rgba(255, 255, 255, 0.1)", // 白の透明度を10%に設定
+  },
+});
+
 const customEditorTheme = EditorView.theme({
   '.cm-content': {
     backgroundColor: '#271D42',
@@ -65,6 +72,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
             lineNumbers(),
             highlightActiveLine(),
             syntaxHighlighting(defaultHighlightStyle),
+            customHighlightTheme, // カスタムテーマを追加
             customLineNumberTheme,
             customEditorTheme,
             EditorView.lineWrapping,
@@ -154,7 +162,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
     <div
       style={{
         display: 'flex',
-        height: '100vh',
+        height: '80vh',
         padding: '20px',
         gap: '20px',
         backgroundColor: '#060038',
@@ -192,34 +200,53 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
         <div
           style={{
             padding: '20px',
+            paddingTop:'50px',
+            height: '30vh',
+            backgroundColor: '#271D42',
+            clipPath: 'polygon(10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%, 0% 10%)', // 左上と右下をカット
+            width: '20vw', // 折り返しのために幅を調整
           }}
         >
           <h1
             style={{
               fontFamily: 'Suez One',
-              fontSize: '40px',
+              fontSize: '80px',
               color: '#A7F002',
+              textShadow: '4px 4px 8px rgba(0, 0, 0, 0.5)',
+              letterSpacing: '2px',
+              wordBreak: 'break-word', // 折り返しを有効にする
+              whiteSpace: 'normal', // 折り返しをサポート
+              margin: 0, // 上下の余白を調整
+              lineHeight: '0.8', // 行間を小さくする
             }}
           >
             MONSTOR
           </h1>
-          <p style={{ color: '#fff' }}>FROM: 10/28</p>
-          <p style={{ color: '#fff' }}>TO: 10/31</p>
+          <p style={{ color: '#fff' }}>
+            <span style={{ color: '#3242DC' }}>FROM:</span> 
+            <span style={{ color: '#A7F002' }}> 10/28</span>
+          </p>
+          <p style={{ color: '#fff' }}>
+            <span style={{ color: '#3242DC' }}>TO:</span> 
+            <span style={{ color: '#A7F002' }}> 10/31</span>
+          </p>
         </div>
+
 
         <div
           style={{
             flex: 1,
             padding: '20px',
+            height:'20vh',
           }}
         >
           {['ユーザー1', 'ユーザー2', 'ユーザー3'].map((name, index) => (
             <div key={index} style={{ marginBottom: '10px', color: '#fff' }}>
-              <strong>{`Name: ${name}`}</strong>
+              <strong className="user-name">{`Name: ${name}`}</strong>
               <iframe
                 style={{
                   width: '100%',
-                  height: '100px',
+                  height: '8vh',
                   borderRadius: '8px',
                   border: '1px solid #ccc',
                 }}
@@ -325,7 +352,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({event_now,group_now}
           width: '40%',
           height: '100%',
           borderRadius: '8px',
-          backgroundColor: '#fff',
+          backgroundColor: '#151454',
           marginLeft: '10px',
         }}
       ></iframe>

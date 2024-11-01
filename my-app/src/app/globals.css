@@ -4,6 +4,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Slackside+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Wendy+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Suez+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+
 
 @tailwind base;
 @tailwind components;
@@ -48,4 +50,8 @@ video {
   body {
     font-size:large;
   }
+}
+
+.user-name {
+  font-family: "DotGothic16", sans-serif;
 }

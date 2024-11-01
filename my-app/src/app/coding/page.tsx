@@ -45,7 +45,7 @@ export default function Home() {
   }, [user, event_now]);
 
   return (
-    <div>
+    <div className="bg-[#060038] min-h-screen">
       <Header />
       <CodeMirrorEditor event_now = {event_now} group_now="group_1" />
     </div>
