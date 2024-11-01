@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import Header from '@/componets/hedder';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/auth';
 import { useAuth } from '../../../context/auth';
 import { getEvent } from '../../../firebase/getEvent';
+import { getParticipantGroupInEvent } from '../../../firebase/checkParticipantsExists';
 
 export default function Home() {
   const [waiting, setWaiting] = useState<boolean>(false);
@@ -15,6 +16,7 @@ export default function Home() {
 
   // 現在のイベント、イベントデータの保存先
   const event_now = 'event_1';
+  const [group_now, setGroupnNow] = useState<any>(null);
   const [eventData, setEventData] = useState<any>(null);
 
   // 未ログイン時トップに飛ばす
@@ -38,9 +40,29 @@ export default function Home() {
       } catch (error) {
         console.error('failed to get event data:', error);
       }
+      if (user?.uid) {
+        const eventGroup = await getParticipantGroupInEvent(
+          event_now,
+          user.uid
+        );
+        console.log(eventGroup);
+        setGroupnNow(eventGroup);
+      } else {
+        setGroupnNow(null);
+      }
     };
     getEventData();
-  }, [event_now]);
+  }, [user, event_now]);
+
+  // group_nowに応じたページ遷移の処理
+  const handleNavigation = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (group_now === null) {
+      console.log('not yet');
+    } else {
+      router.push('/coding');
+    }
+  };
 
   //サインアウト
   const signOut = (e: React.MouseEvent) => {
@@ -61,14 +83,16 @@ export default function Home() {
 
   return (
     <div>
-      <Header/>
+      <Header />
       <div>this is top page</div>
       <ul>
         <li>
           <Link href="/top">Top Page</Link>
         </li>
         <li>
-          <Link href="/coding">Coding</Link>
+          <a href="/coding" onClick={handleNavigation}>
+            Coding
+          </a>
         </li>
       </ul>
       <br />
