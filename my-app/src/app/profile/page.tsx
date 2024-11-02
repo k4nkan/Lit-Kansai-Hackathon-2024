@@ -26,9 +26,8 @@ const Profile = () => {
       <Header />
       <main className="p-8 flex flex-col items-center">
         <div className="text-center mt-8 mb-12">
-          <h1 className="text-6xl font-bold mb-8" style={{ color: '#A7F002' }}>
-            NAME: {user.name || 'N/A'}
-          </h1>
+          <span className="font-bold text-sm"style={{ color: '#A7F002', fontSize: '3rem', marginRight: '2rem'}}>NAME:</span>
+          <span className="user-name"style={{ color: '#A7F002',fontSize:'3rem' }}>{user?.name || 'N/A'}</span>
         </div>
         <ArchiveCardList />
       </main>
