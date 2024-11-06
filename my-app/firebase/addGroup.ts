@@ -3,6 +3,7 @@ import {
   doc,
   getCountFromServer,
   getDoc,
+  setDoc,
   updateDoc,
 } from 'firebase/firestore';
 import { saveCode } from './saveCode';
@@ -14,6 +15,8 @@ export const addGroup = async (uid: string, event_now: string) => {
   const groupSnapshot = await getCountFromServer(countGroupRef);
   let groupCount = groupSnapshot.data().count;
   let yourGroup = `group_${groupCount}`;
+  console.log('groupCount:' + groupCount);
+  console.log('yourGroup:' + yourGroup);
 
   // 2. 現在のグループのメンバー数を取得
   const memberRef = doc(db, 'events', event_now, 'groups', yourGroup);
@@ -30,6 +33,10 @@ export const addGroup = async (uid: string, event_now: string) => {
     groupCount += 1;
     yourGroup = `group_${groupCount}`;
     memberCount = 0; // 新しいグループは最初のメンバーからカウント
+
+    // 新規グループの作成
+    const newGroupRef = doc(db, 'events', event_now, 'groups', yourGroup);
+    await setDoc(newGroupRef, {}); // 空のドキュメントを作成
   }
 
   // 4. 新しいメンバーを追加
@@ -38,7 +45,7 @@ export const addGroup = async (uid: string, event_now: string) => {
     [`member_${memberCount + 1}`]: uid,
   });
 
-  // 5. コードの保存
-  const code = ''; // 必要に応じてコードを生成・取得
+  // 5. コードの保存（初回の登録のためコードは空白）
+  const code = '';
   await saveCode(code, uid, yourGroup, event_now);
 };

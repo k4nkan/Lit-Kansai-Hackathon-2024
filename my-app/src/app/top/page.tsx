@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { logout } from '../../lib/auth';
 import { useAuth } from '../../../context/auth';
 import { getEvent } from '../../../firebase/getEvent';
-import { getParticipantGroupInEvent } from '../../../firebase/checkParticipantsExists';
+import { checkParticipantsExists } from '../../../firebase/checkParticipantsExists';
 import Dashboard from '@/componets/Dashboard';
 import CardList from '@/componets/cardlist';
 import ArchiveCardList from '@/componets/ArchiveCardList';
@@ -33,6 +33,7 @@ export default function Home() {
   // ページ表示時にイベント情報を取得
   useEffect(() => {
     const getEventData = async () => {
+      // イベントデータをeventDataに保存
       try {
         const data = await getEvent(event_now);
         setEventData(data);
@@ -40,12 +41,10 @@ export default function Home() {
       } catch (error) {
         console.error('failed to get event data:', error);
       }
+      // uidをもとにグループに参加済みか判断
       if (user?.uid) {
-        const eventGroup = await getParticipantGroupInEvent(
-          event_now,
-          user.uid
-        );
-        console.log(eventGroup);
+        const eventGroup = await checkParticipantsExists(event_now, user.uid);
+        console.log(user.uid + 'のグループは' + eventGroup);
         setGroupnNow(eventGroup);
       } else {
         setGroupnNow(null);
@@ -58,9 +57,10 @@ export default function Home() {
   const handleMoveToCoding = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (group_now === null) {
-      console.log('not yet');
       if (user?.uid) {
+        console.log('グループ未参加のため参加処理を実行します');
         addGroup(user?.uid, event_now);
+        router.push('/coding');
       }
     } else {
       router.push('/coding');
