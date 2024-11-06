@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Header from '@/componets/hedder';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { logout } from '@/lib/auth';
+import { logout } from '../../lib/auth';
 import { useAuth } from '../../../context/auth';
 import { getEvent } from '../../../firebase/getEvent';
 import { getParticipantGroupInEvent } from '../../../firebase/checkParticipantsExists';
@@ -14,7 +14,7 @@ import ArchiveCardList from '@/componets/ArchiveCardList';
 import { addGroup } from '../../../firebase/addGroup';
 
 export default function Home() {
-  const [waiting, setWaiting] = useState<boolean>(false);
+  const [waiting, setWaiting] = useState(false);
   const router = useRouter();
   const user = useAuth();
 
@@ -29,10 +29,6 @@ export default function Home() {
       router.push('/');
     }
   }, [user, router]);
-
-  if (user === null) {
-    return <p>Loading...</p>;
-  }
 
   // ページ表示時にイベント情報を取得
   useEffect(() => {
@@ -59,7 +55,7 @@ export default function Home() {
   }, [user, event_now]);
 
   // group_nowに応じたページ遷移の処理
-  const handleNavigation = async (e: React.MouseEvent) => {
+  const handleMoveToCoding = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (group_now === null) {
       console.log('not yet');
@@ -72,57 +68,61 @@ export default function Home() {
   };
 
   //サインアウト
-  const signOut = (e: React.MouseEvent) => {
+  const signOut = async (e: React.MouseEvent) => {
     e.preventDefault();
     setWaiting(true);
 
-    logout()
-      .then(() => {
-        router.push('/');
-      })
-      .catch((error) => {
-        console.error('Logout error:', error?.code);
-      })
-      .finally(() => {
-        setWaiting(false);
-      });
+    try {
+      await logout();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setWaiting(false);
+    }
   };
 
   return (
     <div
       style={{ backgroundColor: '#060038', color: '#FFFFFF', padding: '20px' }}
     >
-      <div style={{ marginBottom: '20px' }}>
-        <Header />
-      </div>
-      <div style={{ marginBottom: '200px' }}>
-        <Dashboard />
-      </div>
-      <div style={{ marginBottom: '200px' }}>
-        <CardList />
-      </div>
-      <div style={{ marginBottom: '200px' }}>
-        <ArchiveCardList />
-      </div>
-      <ul style={{ marginBottom: '20px' }}>
-        <li>
-          <a href="/coding" onClick={handleNavigation}>
-            Coding
-          </a>
-        </li>
-      </ul>
-      {eventData ? (
-        <div style={{ marginBottom: '20px' }}>
-          <div>start at: {eventData.start}</div>
-          <div>end at: {eventData.end}</div>
-          <div>theme: {eventData.theme}</div>
-        </div>
+      {user === null ? (
+        <p>Loading...</p>
       ) : (
-        <div style={{ marginBottom: '20px' }}>now loading...</div>
+        <>
+          <div style={{ marginBottom: '20px' }}>
+            <Header />
+          </div>
+          <div style={{ marginBottom: '200px' }}>
+            <Dashboard />
+          </div>
+          <div style={{ marginBottom: '200px' }}>
+            <CardList />
+          </div>
+          <div style={{ marginBottom: '200px' }}>
+            <ArchiveCardList />
+          </div>
+          <ul style={{ marginBottom: '20px' }}>
+            <li>
+              <a href="/coding" onClick={handleMoveToCoding}>
+                Coding
+              </a>
+            </li>
+          </ul>
+          {eventData ? (
+            <div style={{ marginBottom: '20px' }}>
+              <div>start at: {eventData.start}</div>
+              <div>end at: {eventData.end}</div>
+              <div>theme: {eventData.theme}</div>
+            </div>
+          ) : (
+            <div style={{ marginBottom: '20px' }}>now loading...</div>
+          )}
+          <button onClick={signOut}>
+            {waiting ? 'now loading' : 'log out'}
+          </button>
+        </>
       )}
-      <a href="/top" onClick={signOut}>
-        {waiting ? 'now loading' : 'log out'}
-      </a>
     </div>
   );
 }
