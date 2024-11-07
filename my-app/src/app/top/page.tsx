@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import Header from '@/componets/hedder';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
