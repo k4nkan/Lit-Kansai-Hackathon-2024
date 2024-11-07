@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/auth';
 import { getEvent } from '../../../firebase/getEvent';
-import { getParticipantGroupInEvent } from '../../../firebase/checkParticipantsExists';
+import { checkParticipantsExists } from '../../../firebase/checkParticipantsExists';
 
 export default function Home() {
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function Home() {
         console.error('failed to get event data:', error);
       }
       if (user?.uid) {
-        const eventGroup = await getParticipantGroupInEvent(
+        const eventGroup = await checkParticipantsExists(
           event_now,
           user.uid
         );

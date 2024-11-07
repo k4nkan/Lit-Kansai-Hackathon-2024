@@ -1,7 +1,14 @@
 import { db } from './client';
-import { getDoc, doc, collection, getDocs, query, where } from 'firebase/firestore';
+import {
+  getDoc,
+  doc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 
-export const getParticipantGroupInEvent = async (
+export const checkParticipantsExists = async (
   event_now: string,
   uid: string
 ): Promise<string | null> => {
@@ -22,10 +29,10 @@ export const getParticipantGroupInEvent = async (
       const participantData = participantDoc.data();
 
       // groupフィールドが存在する場合、その値を返す
+      console.log('参加済み');
       return participantData.group || null;
     } else {
-      console.log('該当するparticipantが見つかりません');
-      console.log(uid);
+      console.log(uid + 'は未参加です');
       return null;
     }
   } catch (error) {
