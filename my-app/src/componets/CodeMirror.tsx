@@ -10,8 +10,7 @@ import {
   syntaxHighlighting,
   defaultHighlightStyle,
 } from '@codemirror/language';
-import useAuth from '../../firebase/useAuth';
-import { useRouter } from 'next/navigation';
+import { useAuth } from '../../context/auth';
 import { saveCode } from '../../firebase/saveCode';
 import { getCode } from '../../firebase/getCode';
 
@@ -31,8 +30,8 @@ const customLineNumberTheme = EditorView.theme({
 
 // カスタムハイライトカラー（白の透明度を下げた色）
 const customHighlightTheme = EditorView.theme({
-  ".cm-activeLine": {
-    backgroundColor: "rgba(255, 255, 255, 0.1)", // 白の透明度を10%に設定
+  '.cm-activeLine': {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // 白の透明度を10%に設定
   },
 });
 
@@ -49,11 +48,13 @@ interface CodeMirrorEditorProps {
   group_now: string;
 }
 
-const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_now }) => {
+const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({
+  event_now,
+  group_now,
+}) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const router = useRouter();
-  const { user } = useAuth(router);
+  const user = useAuth();
   const [editorView, setEditorView] = useState<EditorView | null>(null);
   const [code, setCode] = useState<string>('');
   const [consoleOutput, setConsoleOutput] = useState<string>('');
@@ -214,7 +215,8 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_no
             paddingTop: '50px',
             height: '30vh',
             backgroundColor: '#271D42',
-            clipPath: 'polygon(10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%, 0% 10%)',
+            clipPath:
+              'polygon(10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%, 0% 10%)',
             width: '20vw',
           }}
         >
@@ -458,7 +460,13 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_no
       ) : (
         <>
           {/* 切り替え後の4分割プレビュー */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', flex: 1 }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              flex: 1,
+            }}
+          >
             {[1, 2, 3, 4].map((index) => (
               <iframe
                 key={index}
@@ -489,7 +497,13 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ event_now, group_no
               ></iframe>
             ))}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '10px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              paddingTop: '10px',
+            }}
+          >
             <button
               style={{
                 backgroundColor: '#3341DF',
