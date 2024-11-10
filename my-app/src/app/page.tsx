@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/auth';
 import { login } from '../lib/auth';
 import { useRouter } from 'next/navigation';
-import { base64Image } from '@/img/base64Image';
+import { topPageImage } from '../assets/images/topPageImage';
 
 export default function Home(): JSX.Element {
   const [waiting, setWaiting] = useState<boolean>(false);
@@ -40,7 +40,7 @@ export default function Home(): JSX.Element {
       {/* タイトル部分 */}
       <h1>
         {/* Base64エンコードされた画像を表示 */}
-      <img src={base64Image} alt="Monster" style={{ width: '40vw', height: 'auto',marginBottom:'10vh'}} />
+      <img src={topPageImage} alt="Monster" style={{ width: '40vw', height: 'auto',marginBottom:'10vh'}} />
       </h1>
 
       {/* 中の枠（カード） */}
